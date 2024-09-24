@@ -1,21 +1,16 @@
 var fs = require("fs");
 
 // Functions for writing and removing user data from local txt files
+// TODO make all this MONGODB yup
 
 function signup(username, password) {
     let userList = [];
 
-    /*fs.readFile("users.txt", "utf8", function(err, data) {
-        if (err) {
-            return console.error(err);
-        }
-        const content = data;
-
-        userList = JSON.parse(content.toString());
-        console.log(userList);
-    });*/
-
-    userList = JSON.parse(fs.readFileSync("users.txt", "utf8"));
+    try {
+        userList = JSON.parse(fs.readFileSync("users.txt", "utf8"));
+    } catch (error) {
+        console.error("Error reading file: ", error)
+    }
 
     const newUser = {
         username: username,
@@ -23,18 +18,33 @@ function signup(username, password) {
     }
 
     if (!userExists(userList, newUser)) {
-        console.log("User Does not Exist, Adding: " + newUser.username);
+        console.log("User does not exist, adding user: " + newUser.username);
         userList.push(newUser);
     }
     else {
-        console.log("User Exists, Not Adding");
+        console.log("User already exists, not adding user: " + newUser.username);
     }
 
     fs.writeFile("users.txt", JSON.stringify(userList), function(err) {
         if (err) {
-            return console.error(err);
+            return console.error(err)
         }
     });
+}
+
+function login(username, password) {
+    try {
+        userList = JSON.parse(fs.readFileSync("users.txt", "utf8"));
+    } catch (error) {
+        console.error("Error reading file: ", error)
+    }
+
+    const user = {
+        username: username,
+        password: password
+    }
+
+    return userExists(userList, user)
 }
 
 function userExists(userList, user) {
@@ -55,5 +65,6 @@ function removeUser(username) {
 module.exports =  {
     signup,
     removeUser,
+    login,
 };
 
