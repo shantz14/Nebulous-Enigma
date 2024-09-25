@@ -44,13 +44,26 @@ function login(username, password) {
         password: password
     }
 
-    return userExists(userList, user)
+    return validateCredentials(userList, user)
 }
 
 function userExists(userList, user) {
+    console.log(user)
     exists = false;
     userList.forEach(item => {
         if (item.username === user.username) {
+            exists = true;
+        }
+    });
+    
+    return exists;
+}
+
+function validateCredentials(userList, user) {
+    console.log(user)
+    exists = false;
+    userList.forEach(item => {
+        if (item.username === user.username&&item.password === user.password) {
             exists = true;
         }
     });
